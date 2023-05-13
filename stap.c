@@ -6,6 +6,16 @@
 #define CLEAR "\033[2J\033[H\033[2J"
 #define usage(name) ( printf("usage: %s height\n", name) )
 
+int hsleep(int delay) {
+	/* 1000000 is the number of us in s */
+	long usec = delay * (1000000/10);
+
+	/* TODO: consider using nanosleep
+	 * usleep is deprecated, however nanosleep is a lot
+	 * more complicated to use */
+	return usleep(usec);
+}
+
 int main(int argc, char *argv[]) {
 	if (argc < 2) {
 		if (argc != 0)
@@ -50,7 +60,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
-		sleep(delay);
+		hsleep(delay);
 	}
 }
 
