@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
+#include <string.h>
 
 #define CLEAR "\033[2J\033[H\033[2J"
-#define usage(name) ( printf("usage: %s height\n", name) )
+#define usage(name) ( printf("usage: %s height [xoffset] [yoffset]\n", name) )
 
 int hsleep(int delay) {
 	/* 1000000 is the number of us in s */
@@ -29,6 +30,32 @@ int main(int argc, char *argv[]) {
 		return EINVAL;
 	}
 
+	/* to make the offsetting faster, we pre-compute
+	 * them in memory */
+	char *xoffset = "";
+	char *yoffset = "";
+	{
+		int xoffn = 0;
+		int yoffn = 0;
+
+		if (argc > 2) {
+			xoffn = atoi(argv[2]);
+		}
+		if (argc > 3) {
+			yoffn = atoi(argv[3]);
+		}
+
+		/* adding one to the size gives us a free
+		 * null byte, since calloc zeros first */
+		yoffset = calloc(sizeof 'h', xoffn+yoffn+1);
+		/* resource saving trick: xoffset is the
+		 * second half of yoffset, reading yoffset
+		 * will get both */
+		xoffset = yoffset + yoffn;
+		memset(yoffset, '\n', yoffn);
+		memset(xoffset, ' ', xoffn);
+	}
+
 	while (1) {
 		int delay = 0;
 		char cur = 0;
@@ -48,15 +75,18 @@ int main(int argc, char *argv[]) {
 		}
 
 		printf(CLEAR);
+		fputs(yoffset, stdout);
 
 		{
 			int lines = 0;
 			while (lines < height && (cur = getchar())) {
 				if (cur == EOF)
 					return 0;
-				if (cur == '\n')
-					lines++;
 				putchar(cur);
+				if (cur == '\n') {
+					fputs(xoffset, stdout);
+					lines++;
+				}
 			}
 		}
 
