@@ -31,9 +31,10 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* to make the offsetting faster, we pre-compute
-	 * them in memory */
+	 * them in memory, and hide CLEAR in there too */
 	char *xoffset = "";
-	char *yoffset = "";
+	char *yoffset = CLEAR;
+
 	{
 		int xoffn = 0;
 		int yoffn = 0;
@@ -45,14 +46,18 @@ int main(int argc, char *argv[]) {
 			yoffn = atoi(argv[3]);
 		}
 
-		/* adding one to the size gives us a free
-		 * null byte, since calloc zeros first */
-		yoffset = calloc(sizeof 'h', xoffn+yoffn+1);
+		/* sizeof(CLEAR) is oversized by 1 due to
+		 * its null byte, which gives us a free null
+		 * byte as calloc zeros first */
+		yoffset = calloc(sizeof 'h', sizeof(CLEAR)+xoffn+yoffn);
+
 		/* resource saving trick: xoffset is the
 		 * second half of yoffset, reading yoffset
 		 * will get both */
-		xoffset = yoffset + yoffn;
-		memset(yoffset, '\n', yoffn);
+		xoffset = yoffset + yoffn + sizeof(CLEAR)-1;
+
+		memcpy(yoffset, CLEAR, sizeof(CLEAR)-1);
+		memset(yoffset+sizeof(CLEAR)-1, '\n', yoffn);
 		memset(xoffset, ' ', xoffn);
 	}
 
@@ -74,7 +79,6 @@ int main(int argc, char *argv[]) {
 			delay = atoi(delaybuf);
 		}
 
-		printf(CLEAR);
 		fputs(yoffset, stdout);
 
 		{
