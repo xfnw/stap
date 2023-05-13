@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <errno.h>
 
 #define CLEAR "\033[2J\033[H\033[2J"
 #define usage(name) ( printf("usage: %s height\n", name) )
@@ -9,13 +10,13 @@ int main(int argc, char *argv[]) {
 	if (argc < 2) {
 		if (argc != 0)
 			usage(*argv);
-		return 22;
+		return EINVAL;
 	}
 
 	int height = atoi(argv[1]);
 	if (height == 0) {
 		usage(*argv);
-		return 22;
+		return EINVAL;
 	}
 
 	while (1) {
