@@ -1,0 +1,5 @@
+stap
+*.o
+*.txt
+*.zst
+
