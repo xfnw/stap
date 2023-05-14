@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 			char delaybuf[5] = "";
 
 			while (delay < 4 && (cur = getchar())) {
-				if (cur == EOF)
+				if (cur == (char)EOF)
 					return 0;
 				if (cur == '\n' || cur == ' ')
 					break;
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 		{
 			int lines = 0;
 			while (lines < height && (cur = getchar())) {
-				if (cur == EOF)
+				if (cur == (char)EOF)
 					return 0;
 				putchar(cur);
 				if (cur == '\n') {
