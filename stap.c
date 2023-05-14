@@ -9,7 +9,7 @@
 
 int hsleep(int delay) {
 	/* 1000000 is the number of us in s */
-	long usec = delay * (1000000/10);
+	long usec = delay * (1000000/15);
 
 	/* TODO: consider using nanosleep
 	 * usleep is deprecated, however nanosleep is a lot
