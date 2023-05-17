@@ -11,7 +11,8 @@
 /* blank from cursor to end of line, plus send newline */
 #define CLEAREOL "\033[K\n"
 
-#define usage(name) ( printf("usage: %s height [xoffset] [yoffset]\n", name) )
+#define eprintf(...) ( fprintf(stderr, __VA_ARGS__) )
+#define usage(name) ( eprintf("usage: %s height [xoffset] [yoffset]\n", name) )
 
 int hsleep(int delay) {
 	/* 1000000 is the number of us in s */
