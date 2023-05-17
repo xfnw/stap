@@ -1,4 +1,4 @@
-CFLAGS ?= -D_GNU_SOURCE -O3
+CFLAGS ?= -O3
 
 all: stap
 
