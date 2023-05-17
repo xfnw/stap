@@ -4,7 +4,13 @@
 #include <errno.h>
 #include <string.h>
 
-#define CLEAR "\033[H\033[2J"
+/* blank the entire screen */
+#define CLEAR "\033[2J"
+/* move cursor to top left */
+#define HOME "\033[H"
+/* blank from cursor to end of line, plus send newline */
+#define CLEAREOL "\033[K\n"
+
 #define usage(name) ( printf("usage: %s height [xoffset] [yoffset]\n", name) )
 
 int hsleep(int delay) {
@@ -32,8 +38,8 @@ int main(int argc, char *argv[]) {
 
 	/* to make the offsetting faster, we pre-compute
 	 * them in memory, and hide CLEAR in there too */
-	char *xoffset = "";
-	char *yoffset = CLEAR;
+	char *xoffset = CLEAREOL;
+	char *yoffset = HOME;
 
 	{
 		int xoffn = 0;
@@ -46,20 +52,24 @@ int main(int argc, char *argv[]) {
 			yoffn = atoi(argv[3]);
 		}
 
-		/* sizeof(CLEAR) is oversized by 1 due to
-		 * its null byte, which gives us a free null
-		 * byte as calloc zeros first */
-		yoffset = calloc(sizeof 'h', sizeof(CLEAR)+xoffn+yoffn);
+		/* sizeof is oversized by 1 due to it
+		 * counting null bytes, which gives us a
+		 * free null byte as calloc zeros first */
+		yoffset = calloc(sizeof 'h', sizeof(HOME)+
+				sizeof(CLEAREOL)+xoffn+yoffn-1);
 
 		/* resource saving trick: xoffset is the
 		 * second half of yoffset, reading yoffset
 		 * will get both */
-		xoffset = yoffset + yoffn + sizeof(CLEAR)-1;
+		xoffset = yoffset + yoffn + sizeof(HOME)-1;
 
-		memcpy(yoffset, CLEAR, sizeof(CLEAR)-1);
-		memset(yoffset+sizeof(CLEAR)-1, '\n', yoffn);
-		memset(xoffset, ' ', xoffn);
+		memcpy(yoffset, HOME, sizeof(HOME)-1);
+		memset(yoffset+sizeof(HOME)-1, '\n', yoffn);
+		memcpy(xoffset, CLEAREOL, sizeof(CLEAREOL)-1);
+		memset(xoffset+sizeof(CLEAREOL)-1, ' ', xoffn);
 	}
+
+	fputs(CLEAR, stdout);
 
 	while (1) {
 		int delay = 0;
@@ -69,8 +79,10 @@ int main(int argc, char *argv[]) {
 			char delaybuf[5] = "";
 
 			while (delay < 4 && (cur = getchar())) {
-				if (cur == (char)EOF)
+				if (cur == (char)EOF) {
+					putchar('\n');
 					return 0;
+				}
 				if (cur == '\n' || cur == ' ')
 					break;
 				delaybuf[delay++] = cur;
@@ -84,13 +96,16 @@ int main(int argc, char *argv[]) {
 		{
 			int lines = 0;
 			while (lines < height && (cur = getchar())) {
-				if (cur == (char)EOF)
+				if (cur == (char)EOF) {
+					putchar('\n');
 					return 0;
-				putchar(cur);
+				}
 				if (cur == '\n') {
 					fputs(xoffset, stdout);
 					lines++;
+					continue;
 				}
+				putchar(cur);
 			}
 		}
 

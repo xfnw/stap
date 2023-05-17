@@ -35,8 +35,9 @@ displayed portion
 
 - the terminal clear sequence is hard-coded rather than
   supporting terminfo. if the included one does not work,
-  try changing it to the output of `tput clear | cat -v`,
-  with any `^[` replaced with `\033`
+  piping various options of `tput` into `cat -v`, with any
+  `^[` replaced with `\033`, may help in finding correct
+  values for `CLEAR` `HOME` and `CLEAREOL`
 
 - there is no limit to offset-size, obscenely large offsets
   may cause you to run out of memory
