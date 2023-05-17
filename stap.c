@@ -59,6 +59,12 @@ int main(int argc, char *argv[]) {
 		yoffset = calloc(sizeof 'h', sizeof(HOME)+
 				sizeof(CLEAREOL)+xoffn+yoffn-1);
 
+		if (!yoffset) {
+			eprintf("Failed to allocate offsets: %s\n",
+					strerror(errno));
+			return errno;
+		}
+
 		/* resource saving trick: xoffset is the
 		 * second half of yoffset, reading yoffset
 		 * will get both */
