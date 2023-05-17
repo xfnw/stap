@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <string.h>
 
-#define CLEAR "\033[2J\033[H\033[2J"
+#define CLEAR "\033[H\033[2J"
 #define usage(name) ( printf("usage: %s height [xoffset] [yoffset]\n", name) )
 
 int hsleep(int delay) {
