@@ -16,7 +16,7 @@
 
 int hsleep(int delay) {
 	/* 1000000 is the number of us in s */
-	long usec = delay * (1000000/15);
+	useconds_t usec = delay * (1000000/15);
 
 	/* TODO: consider using nanosleep
 	 * usleep is deprecated, however nanosleep is a lot
@@ -24,7 +24,7 @@ int hsleep(int delay) {
 	return usleep(usec);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, const char *argv[]) {
 	if (argc < 2) {
 		if (argc != 0)
 			usage(*argv);
