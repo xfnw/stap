@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
 
 	fputs(CLEAR, stdout);
 
-	while (1) {
+	for (;;) {
 		int delay = 0;
 		char cur = 0;
 
